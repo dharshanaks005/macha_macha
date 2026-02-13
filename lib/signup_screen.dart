@@ -1,7 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  bool isLoading = false;
+
+  Future<void> signup() async {
+    setState(() => isLoading = true);
+
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Account created successfully")),
+      );
+
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
+
+    setState(() => isLoading = false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +53,6 @@ class SignUpScreen extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-
                 const SizedBox(height: 40),
 
                 const Text(
@@ -31,13 +65,23 @@ class SignUpScreen extends StatelessWidget {
 
                 const SizedBox(height: 30),
 
-                buildInput("Full Name"),
+                buildInput(
+                  controller: nameController,
+                  hint: "Full Name",
+                ),
                 const SizedBox(height: 20),
 
-                buildInput("Email Address"),
+                buildInput(
+                  controller: emailController,
+                  hint: "Email Address",
+                ),
                 const SizedBox(height: 20),
 
-                buildInput("Password", isPassword: true),
+                buildInput(
+                  controller: passwordController,
+                  hint: "Password",
+                  isPassword: true,
+                ),
                 const SizedBox(height: 30),
 
                 SizedBox(
@@ -50,13 +94,15 @@ class SignUpScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/home');
-                    },
-                    child: const Text(
-                      "Sign Up",
-                      style: TextStyle(fontSize: 16),
-                    ),
+                    onPressed: isLoading ? null : signup,
+                    child: isLoading
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : const Text(
+                            "Sign Up",
+                            style: TextStyle(fontSize: 16),
+                          ),
                   ),
                 ),
 
@@ -91,9 +137,13 @@ class SignUpScreen extends StatelessWidget {
     );
   }
 
-  static Widget buildInput(String hint,
-      {bool isPassword = false}) {
+  Widget buildInput({
+    required TextEditingController controller,
+    required String hint,
+    bool isPassword = false,
+  }) {
     return TextField(
+      controller: controller,
       obscureText: isPassword,
       decoration: InputDecoration(
         hintText: hint,

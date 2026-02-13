@@ -1,7 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:macha_macha/services/auth_service.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
+  bool isLoading = false;
+
+  Future<void> login() async {
+    setState(() => isLoading = true);
+
+    try {
+      final user = await _authService.login(
+        emailController.text.trim(),
+        passwordController.text.trim(),
+      );
+
+      if (user != null) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +45,6 @@ class LoginScreen extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-
                 const SizedBox(height: 60),
 
                 // Logo
@@ -32,25 +63,21 @@ class LoginScreen extends StatelessWidget {
 
                 const Text(
                   "MachaMacha",
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                 ),
 
                 const SizedBox(height: 6),
 
                 const Text(
                   "15-minute skill exchange",
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(color: Colors.grey),
                 ),
 
                 const SizedBox(height: 40),
 
-                // Email Field
+                // Email
                 TextField(
+                  controller: emailController,
                   decoration: InputDecoration(
                     hintText: "Email address",
                     filled: true,
@@ -66,8 +93,9 @@ class LoginScreen extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                // Password Field
+                // Password
                 TextField(
+                  controller: passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     hintText: "Password",
@@ -95,26 +123,20 @@ class LoginScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/home');
-                    },
-                    child: const Text(
-                      "Sign In",
-                      style: TextStyle(fontSize: 16),
-                    ),
+                    onPressed: isLoading ? null : login,
+                    child: isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text("Sign In", style: TextStyle(fontSize: 16)),
                   ),
                 ),
-
 
                 const SizedBox(height: 20),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                      "Don't have an account? ",
-                      style: TextStyle(color: Colors.grey),
-                    ),
+                    const Text("Don't have an account? ",
+                        style: TextStyle(color: Colors.grey)),
                     GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, '/signup');
@@ -130,16 +152,12 @@ class LoginScreen extends StatelessWidget {
                   ],
                 ),
 
-
                 const SizedBox(height: 40),
 
                 const Text(
                   "By continuing, you agree to our Terms & Privacy",
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],
             ),

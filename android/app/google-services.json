@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "205615638875",
+    "project_id": "backend-fae2d",
+    "storage_bucket": "backend-fae2d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:205615638875:android:f418ef30d004fb81ca927e",
+        "android_client_info": {
+          "package_name": "com.example.macha_macha"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMFv5C6ni9neV1BTr5_UlI3Go30CZ09nY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
