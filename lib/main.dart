@@ -33,7 +33,6 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUpScreen(),
         '/home': (context) => const HomeScreen(),
         '/profile': (context) => const ProfileScreen(),
-        '/chat': (context) => const ChatScreen(),
       },
     );
   }

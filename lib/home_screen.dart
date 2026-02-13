@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:macha_macha/chat_screen.dart';
 
 import 'package:macha_macha/widgets/home_request_tile.dart';
 import 'request_help_screen.dart';
@@ -101,73 +102,62 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
 
-              const SizedBox(height: 25),
-
-              // 🔹 START SESSION BUTTON
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4A90E2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  onPressed: createSession,
-                  child: const Text(
-                    "Start Session",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
-
               const SizedBox(height: 30),
 
               // 🔹 REQUEST LIST
               Expanded(
-                child: ListView(
-                  children: [
+                child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('requests')
+                      .where('status', isEqualTo: 'open')
+                      .snapshots(),
+                  builder: (context, snapshot) {
 
-                    HomeRequestTile(
-                      userName: "Sarah Johnson",
-                      reliability: "96%",
-                      title: "Help me understand React hooks patterns",
-                      category: "Web Development",
-                      isUrgent: true,
-                      onTap: () {
-                        Navigator.pushNamed(context, '/chat');
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    final docs = snapshot.data!.docs;
+
+                    if (docs.isEmpty) {
+                      return const Center(child: Text("No requests yet"));
+                    }
+
+                    return ListView.builder(
+                      itemCount: docs.length,
+                      itemBuilder: (context, index) {
+                        final data = docs[index];
+
+                        return HomeRequestTile(
+                          userName: "User", // we improve later
+                          reliability: "95%",
+                          title: data['skillNeeded'],
+                          category: data['skillNeeded'],
+                          isUrgent: false,
+                          onTap: () async {
+                            final docRef = await FirebaseFirestore.instance
+                                .collection('sessions')
+                                .add({
+                              'status': 'active',
+                              'createdAt': FieldValue.serverTimestamp(),
+                            });
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ChatScreen(sessionId: docRef.id),
+                              ),
+                            );
+                          },
+
+                          
+                        );
                       },
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    HomeRequestTile(
-                      userName: "Michael Lee",
-                      reliability: "92%",
-                      title: "Quick Spanish conversation practice",
-                      category: "Languages",
-                      isUrgent: false,
-                      onTap: () {
-                        Navigator.pushNamed(context, '/chat');
-                      },
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    HomeRequestTile(
-                      userName: "Emma Davis",
-                      reliability: "98%",
-                      title: "Feedback on my UI design mockup",
-                      category: "Design",
-                      isUrgent: false,
-                      onTap: () {
-                        Navigator.pushNamed(context, '/chat');
-                      },
-                    ),
-                  ],
+                    );
+                  },
                 ),
-              ),
+              )
+
             ],
           ),
         ),

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class RequestHelpScreen extends StatefulWidget {
@@ -11,6 +13,11 @@ class _RequestHelpScreenState extends State<RequestHelpScreen> {
 
   String selectedLevel = "Beginner";
   bool isUrgent = false;
+  final TextEditingController descriptionController =
+    TextEditingController();
+
+String? selectedCategory;
+
 
   @override
   Widget build(BuildContext context) {
@@ -49,20 +56,20 @@ class _RequestHelpScreenState extends State<RequestHelpScreen> {
             const SizedBox(height: 10),
 
             TextField(
+              controller: descriptionController,
               maxLines: 4,
               decoration: InputDecoration(
-                hintText:
-                    "E.g., Help me understand React hooks patterns",
+                hintText: "E.g., Help me understand React hooks patterns",
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
                 ),
-                contentPadding:
-                    const EdgeInsets.all(18),
+                contentPadding: const EdgeInsets.all(18),
               ),
             ),
+
 
             const SizedBox(height: 24),
 
@@ -87,7 +94,13 @@ class _RequestHelpScreenState extends State<RequestHelpScreen> {
                     DropdownMenuItem(
                         value: "Design", child: Text("Design")),
                   ],
-                  onChanged: null,
+                  value: selectedCategory,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedCategory = value;
+                    });
+                  },
+
                 ),
               ),
             ),
@@ -156,7 +169,36 @@ class _RequestHelpScreenState extends State<RequestHelpScreen> {
                         BorderRadius.circular(16),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () async {
+
+                  final user = FirebaseAuth.instance.currentUser;
+
+                  if (user == null) return;
+
+                  if (descriptionController.text.trim().isEmpty ||
+                      selectedCategory == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Fill all fields")),
+                    );
+                    return;
+                  }
+
+                  await FirebaseFirestore.instance
+                      .collection('requests')
+                      .add({
+                    'userId': user.uid,
+                    'description': descriptionController.text.trim(),
+                    'skillNeeded': selectedCategory,
+                    'level': selectedLevel,
+                    'isUrgent': isUrgent,
+                    'duration': 15,
+                    'status': 'open',
+                    'createdAt': FieldValue.serverTimestamp(),
+                  });
+
+                  Navigator.pop(context);
+                },
+
                 child: const Text(
                   "Submit Request",
                   style: TextStyle(fontSize: 16),
