@@ -1,25 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:macha_macha/widgets/home_request_tile.dart';
 import 'request_help_screen.dart';
 
-
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
+  // 🔹 CREATE SESSION FUNCTION
+  Future<void> createSession() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("User not logged in")),
+      );
+      return;
+    }
+
+    try {
+      await FirebaseFirestore.instance.collection('sessions').add({
+        'userA': user.uid,
+        'userB': null, // will be assigned later
+        'status': 'pending',
+        'createdAt': Timestamp.now(),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Session created successfully")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6F8),
 
-      // Floating Button
+      // 🔹 FLOATING BUTTON
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFF4A90E2),
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => const RequestHelpScreen(),
-            ),
+            MaterialPageRoute(builder: (_) => const RequestHelpScreen()),
           );
         },
         child: const Icon(Icons.add),
@@ -59,11 +94,32 @@ class HomeScreen extends StatelessWidget {
                     },
                     child: const CircleAvatar(
                       radius: 22,
-                      backgroundImage: NetworkImage(
-                          "https://i.pravatar.cc/150?img=3"),
+                      backgroundImage:
+                          NetworkImage("https://i.pravatar.cc/150?img=3"),
                     ),
                   )
                 ],
+              ),
+
+              const SizedBox(height: 25),
+
+              // 🔹 START SESSION BUTTON
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4A90E2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  onPressed: createSession,
+                  child: const Text(
+                    "Start Session",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
               ),
 
               const SizedBox(height: 30),
@@ -76,8 +132,7 @@ class HomeScreen extends StatelessWidget {
                     HomeRequestTile(
                       userName: "Sarah Johnson",
                       reliability: "96%",
-                      title:
-                          "Help me understand React hooks patterns",
+                      title: "Help me understand React hooks patterns",
                       category: "Web Development",
                       isUrgent: true,
                       onTap: () {
@@ -90,8 +145,7 @@ class HomeScreen extends StatelessWidget {
                     HomeRequestTile(
                       userName: "Michael Lee",
                       reliability: "92%",
-                      title:
-                          "Quick Spanish conversation practice",
+                      title: "Quick Spanish conversation practice",
                       category: "Languages",
                       isUrgent: false,
                       onTap: () {
@@ -111,7 +165,6 @@ class HomeScreen extends StatelessWidget {
                         Navigator.pushNamed(context, '/chat');
                       },
                     ),
-
                   ],
                 ),
               ),
