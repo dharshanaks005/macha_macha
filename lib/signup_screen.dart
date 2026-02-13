@@ -33,7 +33,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         'name': nameController.text.trim(),
         'email': emailController.text.trim(),
         'createdAt': Timestamp.now(),
-        'rating': 0,
+        'karmaPoints': 0,
+        'reliability_percentage': 0,  
         'totalSessions': 0,
       });
 
