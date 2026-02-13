@@ -21,6 +21,7 @@ class HomeRequestTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -36,7 +37,6 @@ class HomeRequestTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
-          /// Top user row
           Row(
             children: [
               const CircleAvatar(
@@ -62,7 +62,6 @@ class HomeRequestTile extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          /// Title
           Text(
             title,
             style: const TextStyle(
@@ -73,7 +72,6 @@ class HomeRequestTile extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          /// Chips
           Row(
             children: [
               _chip(category, Colors.grey.shade200),
@@ -86,7 +84,6 @@ class HomeRequestTile extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          /// Action Button
           SizedBox(
             width: double.infinity,
             height: 50,
@@ -98,7 +95,7 @@ class HomeRequestTile extends StatelessWidget {
                 ),
               ),
               onPressed: onTap,
-              child: const Text("Help (15 min)"),
+              child: const Text("Help"),
             ),
           )
         ],
