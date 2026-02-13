@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:macha_macha/login_page.dart';
+import 'splash_screen.dart';
+import 'login_screen.dart';
+import 'home_screen.dart';
+import 'profile_screen.dart';
+import 'chat_screen.dart';
+import 'signup_screen.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+
+void main() {
   runApp(const MyApp());
 }
 
@@ -15,7 +18,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const SplashScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/chat': (context) => const ChatScreen(),
+        '/signup': (context) => const SignUpScreen(),
+
+      },
     );
   }
 }
