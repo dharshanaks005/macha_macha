@@ -95,9 +95,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.pushNamed(context, '/profile');
                     },
                     child: const CircleAvatar(
-                      radius: 22,
-                      backgroundImage:
-                          NetworkImage("https://i.pravatar.cc/150?img=3"),
+                      radius: 45,
+                      backgroundColor: Color(0xFF4A90E2),
+                      child: Icon(Icons.person,
+                          color: Colors.white, 
+                          size: 50), 
                     ),
                   )
                 ],
