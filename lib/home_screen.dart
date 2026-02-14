@@ -131,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         return HomeRequestTile(
                           userName: "User", // we improve later
                           reliability: "95%",
-                          title: data['skillNeeded'],
+                          title: data['description'],
                           category: data['skillNeeded'],
                           isUrgent: false,
                           onTap: () async {
