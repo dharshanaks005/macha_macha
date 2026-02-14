@@ -3,78 +3,79 @@
 </p>
 
 # [Project Name] 🎯
-
+MachaMacha
+Solve real problems with real people -instantly.
 ## Basic Details
 
-### Team Name: [Name]
+### Team Name: Cotton Candy
 
 ### Team Members
-- Member 1: [Name] - [College]
-- Member 2: [Name] - [College]
+- Member 1: Dharshana K S- Government Engineering College Thrissur
+- Member 2: Maria Denny- Government Engineering College Thrissur
 
 ### Hosted Project Link
-[mention your project hosted link here]
+This is our APK File
+https://drive.google.com/file/d/1MghEboihBTcxTWFMFxOFZd_7aP9mz2j5/view?usp=sharing
 
 ### Project Description
-[2-3 lines about what your project does]
+MachaMacha is a real-time peer-to-peer micro mentoring platform that connects users instantly for focused 15-minute problem-solving sessions. It combines speed, accountability, and human connection to deliver meaningful support when it matters most.
 
 ### The Problem statement
-[What problem are you solving?]
+In today’s digital world, information is everywhere — AI tools provide instant answers and forums provide community discussions. Yet users still struggle with real-time human guidance, emotional clarity, and accountability.
+
+Answers can be generic, delayed, noisy, or unreliable. There is no structured system that guarantees instant, private, and responsible one-to-one support.
 
 ### The Solution
-[How are you solving it?]
+MachaMacha introduces a structured 15-minute real-time human support system.
+When a user posts a request:
+The first available helper is matched using a Firestore transaction-based First-Come-First-Serve (FCFS) algorithm
+A private one-to-one chat session begins
+After 15 minutes, the session ends
+Both users rate each other
+Reliability is built through performance, not popularity.
 
 ---
 
 ## Technical Details
 
 ### Technologies/Components Used
+Technologies Used:
+-Flutter
+-Firebase Authentication
+-Cloud Firestore
+-Real-time database listeners
+-Firestore transactions for FCFS matching
 
 **For Software:**
-- Languages used: [e.g., JavaScript, Python, Java]
-- Frameworks used: [e.g., React, Django, Spring Boot]
-- Libraries used: [e.g., axios, pandas, JUnit]
-- Tools used: [e.g., VS Code, Git, Docker]
-
-**For Hardware:**
-- Main components: [List main components]
-- Specifications: [Technical specifications]
-- Tools required: [List tools needed]
+- Languages used: Dart
+- Frameworks used: Flutter
+- Libraries used: Firebase Authentication, Cloud Firestore, Flutter Material UI
+- Tools used: VS Code, Android Studio, Firebase Console, Git, GitHub
 
 ---
 
 ## Features
-
 List the key features of your project:
-- Feature 1: [Description]
-- Feature 2: [Description]
-- Feature 3: [Description]
-- Feature 4: [Description]
+- Feature 1: Instant help request posting with FCFS real-time matching
+- Feature 2: Private one-to-one chat with 15-minute structured sessions
+- Feature 3: Reliability and rating system
+- Feature 4: Emotional support through real human interaction
 
 ---
 
 ## Implementation
 
 ### For Software:
-
 #### Installation
-```bash
-[Installation commands - e.g., npm install, pip install -r requirements.txt]
-```
+clone the repository. then type this into the commandline in root directory
+or download the given apk file.
 
 #### Run
 ```bash
-[Run commands - e.g., npm start, python app.py]
+flutter run
 ```
-
-### For Hardware:
-
-#### Components Required
-[List all components needed with specifications]
-
-#### Circuit Setup
-[Explain how to set up the circuit]
-
+flutter run in the root directory
+Build APK-- flutter build apk
 ---
 
 ## Project Documentation
@@ -83,104 +84,53 @@ List the key features of your project:
 
 #### Screenshots (Add at least 3)
 
-![Screenshot1](Add screenshot 1 here with proper name)
-*Add caption explaining what this shows*
+![profile_page](https://github.com/user-attachments/assets/cf5d41bc-dbf5-4dd1-a93e-e13b89559c7f)
+PROFILE PAGE- This is the profile page in which the user and his/her details are shown along with karma points which is a pay-it-forward system we plan to add on to the future enhancements of our project and it also shows the requests we gave.
 
-![Screenshot2](Add screenshot 2 here with proper name)
-*Add caption explaining what this shows*
+![request_help](https://github.com/user-attachments/assets/06afe4bd-bb22-47ed-9336-db70b6de4690)
+REQUEST_HELP PAGE- When a user wants to seek help for doing any task or learning a microskill then they can use the add button in requests_feed page and then add a new request and categorise it according to its type and level.
 
-![Screenshot3](Add screenshot 3 here with proper name)
-*Add caption explaining what this shows*
+![requests_feed](https://github.com/user-attachments/assets/7a559e0c-0d27-46ce-87f4-8eb2b2b57b8c)
+REQUESTS_FEED PAGE- When a user logins with their registered email id and password this page is what they see and when they click on Help button then it redirects to a chat with the person who posted the request.
+
 
 #### Diagrams
 
 **System Architecture:**
+MachaMacha follows a client–server architecture using Flutter as the frontend and Firebase as the backend.
+The Flutter mobile application handles all user interactions including authentication, request creation, chat sessions, timers, and ratings. Firebase Authentication manages secure user login and identity verification. Cloud Firestore acts as the real-time database, storing users, requests, sessions, chat messages, ratings, and reviews.
+When a user creates a help request, it is stored in Firestore and instantly becomes visible to other users. Session creation and First-Come-First-Serve (FCFS) matching are handled using Firestore atomic transactions to prevent race conditions. Real-time chat updates are streamed from Firestore to both users simultaneously.
+After a 15-minute session ends, ratings and reviews are written back to Firestore, updating user reliability scores.
+This architecture ensures real-time communication, scalability, data consistency, and low latency without requiring a custom backend server.
+![architechture](https://github.com/user-attachments/assets/baa13a45-7242-4f11-b0d0-07986d7c0fe5)
 
-![Architecture Diagram](docs/architecture.png)
-*Explain your system architecture - components, data flow, tech stack interaction*
 
 **Application Workflow:**
-
-![Workflow](docs/workflow.png)
-*Add caption explaining your workflow*
-
----
-
-### For Hardware:
-
-#### Schematic & Circuit
-
-![Circuit](Add your circuit diagram here)
-*Add caption explaining connections*
-
-![Schematic](Add your schematic diagram here)
-*Add caption explaining the schematic*
-
-#### Build Photos
-
-![Team](Add photo of your team here)
-
-![Components](Add photo of your components here)
-*List out all components shown*
-
-![Build](Add photos of build process here)
-*Explain the build steps*
-
-![Final](Add photo of final product here)
-*Explain the final build*
+![workflow](https://github.com/user-attachments/assets/80665e6b-ca8e-402f-ad66-c6484f54365e)
+Application Workflow – MachaMacha
+When the app launches, the Splash Screen initializes Firebase and checks if a user is already logged in using Firebase Authentication.
+If the user is authenticated → they are redirected to the Home Page
+If not → they are taken to the Sign In / Sign Up screen
+Authentication is handled using Firebase Auth, which securely manages login, registration, and session persistence.
+Once logged in, the user reaches the Home Page, which is connected to Cloud Firestore using real-time listeners (StreamBuilder). This allows live updates of help requests.
+Users can:
+Post a help request (stored in Firestore)
+View other users’ requests in real time
+Accept a request (FCFS logic using Firestore transaction)
+Enter a private one-to-one chat session
+After the session, both users can rate each other.
+This architecture ensures secure authentication, real-time updates, and structured peer-to-peer interaction.
 
 ---
 
-## Additional Documentation
-
-### For Web Projects with Backend:
-
-#### API Documentation
-
-**Base URL:** `https://api.yourproject.com`
-
-##### Endpoints
-
-**GET /api/endpoint**
-- **Description:** [What it does]
-- **Parameters:**
-  - `param1` (string): [Description]
-  - `param2` (integer): [Description]
-- **Response:**
-```json
-{
-  "status": "success",
-  "data": {}
-}
-```
-
-**POST /api/endpoint**
-- **Description:** [What it does]
-- **Request Body:**
-```json
-{
-  "field1": "value1",
-  "field2": "value2"
-}
-```
-- **Response:**
-```json
-{
-  "status": "success",
-  "message": "Operation completed"
-}
-```
-
-[Add more endpoints as needed...]
-
----
 
 ### For Mobile Apps:
 
 #### App Flow Diagram
 
-![App Flow](docs/app-flow.png)
-*Explain the user flow through your application*
+![Appflow](https://github.com/user-attachments/assets/777a9f09-d4a4-49fd-bea2-4cf71f955c4c)
+When the APK is installed on your mobilephone , the first thing that pops up is a splashscreen written as 'MACHAMACHA' with our logo.
+Then it leads to a Sign-in or Sign-up page which has proper backend using firebase.Then as the user is logged in they are first directed to the requests_feed page in which they can other users request or they can add a request of their own and the last page is the Profile page in which the user can see the requests they have given and its status whether any other user has accepted it and if so then it redirects it to a chat between these users ,connectiong them.
 
 #### Installation Guide
 
@@ -215,155 +165,13 @@ xcodebuild -workspace App.xcworkspace -scheme App -configuration Debug
 
 ---
 
-### For Hardware Projects:
-
-#### Bill of Materials (BOM)
-
-| Component | Quantity | Specifications | Price | Link/Source |
-|-----------|----------|----------------|-------|-------------|
-| Arduino Uno | 1 | ATmega328P, 16MHz | ₹450 | [Link] |
-| LED | 5 | Red, 5mm, 20mA | ₹5 each | [Link] |
-| Resistor | 5 | 220Ω, 1/4W | ₹1 each | [Link] |
-| Breadboard | 1 | 830 points | ₹100 | [Link] |
-| Jumper Wires | 20 | Male-to-Male | ₹50 | [Link] |
-| [Add more...] | | | | |
-
-**Total Estimated Cost:** ₹[Amount]
-
-#### Assembly Instructions
-
-**Step 1: Prepare Components**
-1. Gather all components listed in the BOM
-2. Check component specifications
-3. Prepare your workspace
-![Step 1](images/assembly-step1.jpg)
-*Caption: All components laid out*
-
-**Step 2: Build the Power Supply**
-1. Connect the power rails on the breadboard
-2. Connect Arduino 5V to breadboard positive rail
-3. Connect Arduino GND to breadboard negative rail
-![Step 2](images/assembly-step2.jpg)
-*Caption: Power connections completed*
-
-**Step 3: Add Components**
-1. Place LEDs on breadboard
-2. Connect resistors in series with LEDs
-3. Connect LED cathodes to GND
-4. Connect LED anodes to Arduino digital pins (2-6)
-![Step 3](images/assembly-step3.jpg)
-*Caption: LED circuit assembled*
-
-**Step 4: [Continue for all steps...]**
-
-**Final Assembly:**
-![Final Build](images/final-build.jpg)
-*Caption: Completed project ready for testing*
-
----
-
-### For Scripts/CLI Tools:
-
-#### Command Reference
-
-**Basic Usage:**
-```bash
-python script.py [options] [arguments]
-```
-
-**Available Commands:**
-- `command1 [args]` - Description of what command1 does
-- `command2 [args]` - Description of what command2 does
-- `command3 [args]` - Description of what command3 does
-
-**Options:**
-- `-h, --help` - Show help message and exit
-- `-v, --verbose` - Enable verbose output
-- `-o, --output FILE` - Specify output file path
-- `-c, --config FILE` - Specify configuration file
-- `--version` - Show version information
-
-**Examples:**
-
-```bash
-# Example 1: Basic usage
-python script.py input.txt
-
-# Example 2: With verbose output
-python script.py -v input.txt
-
-# Example 3: Specify output file
-python script.py -o output.txt input.txt
-
-# Example 4: Using configuration
-python script.py -c config.json --verbose input.txt
-```
-
-#### Demo Output
-
-**Example 1: Basic Processing**
-
-**Input:**
-```
-This is a sample input file
-with multiple lines of text
-for demonstration purposes
-```
-
-**Command:**
-```bash
-python script.py sample.txt
-```
-
-**Output:**
-```
-Processing: sample.txt
-Lines processed: 3
-Characters counted: 86
-Status: Success
-Output saved to: output.txt
-```
-
-**Example 2: Advanced Usage**
-
-**Input:**
-```json
-{
-  "name": "test",
-  "value": 123
-}
-```
-
-**Command:**
-```bash
-python script.py -v --format json data.json
-```
-
-**Output:**
-```
-[VERBOSE] Loading configuration...
-[VERBOSE] Parsing JSON input...
-[VERBOSE] Processing data...
-{
-  "status": "success",
-  "processed": true,
-  "result": {
-    "name": "test",
-    "value": 123,
-    "timestamp": "2024-02-07T10:30:00"
-  }
-}
-[VERBOSE] Operation completed in 0.23s
-```
-
----
 
 ## Project Demo
 
 ### Video
 [Add your demo video link here - YouTube, Google Drive, etc.]
-
-*Explain what the video demonstrates - key features, user flow, technical highlights*
+https://drive.google.com/file/d/1ps9n_QTaJieHckoPlLWYX8N4qt1ayuF9/view?usp=sharing
+It explains the working of the app with the help of microsoft edge as an emulator device in our flutter project.
 
 ### Additional Demos
 [Add any extra demo materials/links - Live site, APK download, online demo, etc.]
@@ -371,20 +179,18 @@ python script.py -v --format json data.json
 ---
 
 ## AI Tools Used (Optional - For Transparency Bonus)
-
 If you used AI tools during development, document them here for transparency:
 
-**Tool Used:** [e.g., GitHub Copilot, v0.dev, Cursor, ChatGPT, Claude]
+**Tool Used:** ChatGPT,FigmaAI
 
-**Purpose:** [What you used it for]
-- Example: "Generated boilerplate React components"
-- Example: "Debugging assistance for async functions"
-- Example: "Code review and optimization suggestions"
+**Purpose:** 
+- ChatGPT was used in the creation of flutter files and its firebase integration .
+
 
 **Key Prompts Used:**
-- "Create a REST API endpoint for user authentication"
-- "Debug this async function that's causing race conditions"
-- "Optimize this database query for better performance"
+- "why does my flutter app load to a red screen image telling its an error"
+- "Debug this future<void> function that's giving an error"
+
 
 **Percentage of AI-generated code:** [Approximately X%]
 
@@ -400,11 +206,8 @@ If you used AI tools during development, document them here for transparency:
 
 ## Team Contributions
 
-- [Name 1]: [Specific contributions - e.g., Frontend development, API integration, etc.]
-- [Name 2]: [Specific contributions - e.g., Backend development, Database design, etc.]
-- [Name 3]: [Specific contributions - e.g., UI/UX design, Testing, Documentation, etc.]
-
----
+- Maria Denny - UI Design, Flutter ,Frontend.
+- Dharshana K S - Firebase initialisation,Firebase database creation and use in app.
 
 ## License
 
