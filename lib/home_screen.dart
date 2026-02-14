@@ -33,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'status': 'pending',
         'createdAt': Timestamp.now(),
       });
+      final currentUser = FirebaseAuth.instance.currentUser!;
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Session created successfully")),
@@ -164,4 +165,56 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+  Future<void> acceptRequest(String requestId, BuildContext context) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
+
+  final requestRef =
+      FirebaseFirestore.instance.collection('requests').doc(requestId);
+
+  try {
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      final snapshot = await transaction.get(requestRef);
+
+      if (!snapshot.exists) {
+        throw Exception("Request not found");
+      }
+
+      if (snapshot['status'] != 'open') {
+        throw Exception("Already accepted");
+      }
+
+      // Create session
+      final sessionRef =
+          FirebaseFirestore.instance.collection('sessions').doc();
+
+      transaction.set(sessionRef, {
+        'userA': snapshot['createdBy'],
+        'userB': user.uid,
+        'status': 'active',
+        'startedAt': FieldValue.serverTimestamp(),
+      });
+
+      // Update request
+      transaction.update(requestRef, {
+        'status': 'accepted',
+        'acceptedBy': user.uid,
+        'sessionId': sessionRef.id,
+      });
+    });
+
+    // Navigate helper to chat
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChatScreen(sessionId: requestId),
+      ),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Too late! Someone already accepted.")),
+    );
+  }
+}
+
 }

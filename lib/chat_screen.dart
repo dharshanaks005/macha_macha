@@ -1,6 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'rating_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   final String sessionId;
@@ -12,116 +12,126 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final TextEditingController messageController = TextEditingController();
+  late Timer _timer;
+  int _remainingSeconds = 1 * 60; // 15 minutes
 
-  Future<void> sendMessage() async {
-    final user = FirebaseAuth.instance.currentUser;
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
+  }
 
-    if (user == null || messageController.text.trim().isEmpty) return;
-
-    await FirebaseFirestore.instance
-        .collection('sessions')
-        .doc(widget.sessionId)
-        .collection('messages')
-        .add({
-      'senderId': user.uid,
-      'text': messageController.text.trim(),
-      'timestamp': FieldValue.serverTimestamp(),
+  void startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingSeconds == 0) {
+        timer.cancel();
+        showTimeUpDialog();
+      } else {
+        setState(() {
+          _remainingSeconds--;
+        });
+      }
     });
+  }
 
-    messageController.clear();
+  String formatTime(int seconds) {
+    int min = seconds ~/ 60;
+    int sec = seconds % 60;
+    return "${min.toString().padLeft(2, '0')}:${sec.toString().padLeft(2, '0')}";
+  }
+
+  void showTimeUpDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: const Text("Session Ended"),
+        content: const Text("Your 15-minute session is over. Quit?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Continue"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => RatingScreen(sessionId: widget.sessionId),
+                ),
+              );
+            },
+            child: const Text("Quit"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void forceStop() {
+    _timer.cancel();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: const Text("Force Stop"),
+        content: const Text("Did you tap Force Stop by mistake?"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              startTimer();
+            },
+            child: const Text("Go Back"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => RatingScreen(sessionId: widget.sessionId),
+                ),
+              );
+            },
+            child: const Text("Quit Session"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = FirebaseAuth.instance.currentUser;
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Session - 15:00"),
-        backgroundColor: const Color(0xFF4A90E2),
+        title: const Text("Chat Session"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.stop_circle),
+            onPressed: forceStop,
+          ),
+        ],
       ),
       body: Column(
         children: [
-
-          // 🔥 MESSAGE LIST
-          Expanded(
-            child: StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection('sessions')
-                  .doc(widget.sessionId)
-                  .collection('messages')
-                  .orderBy('timestamp')
-                  .snapshots(),
-              builder: (context, snapshot) {
-
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                final messages = snapshot.data!.docs;
-
-                return ListView.builder(
-                  padding: const EdgeInsets.all(12),
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-
-                    final data = messages[index];
-                    final isMe =
-                        data['senderId'] == currentUser!.uid;
-
-                    return Align(
-                      alignment:
-                          isMe ? Alignment.centerRight : Alignment.centerLeft,
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 4),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: isMe
-                              ? const Color(0xFF4A90E2)
-                              : Colors.grey.shade300,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Text(
-                          data['text'] ?? '',
-                          style: TextStyle(
-                            color: isMe ? Colors.white : Colors.black,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Text(
+              "Time Left: ${formatTime(_remainingSeconds)}",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
 
-          // 🔥 MESSAGE INPUT
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            color: Colors.white,
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: messageController,
-                    decoration: const InputDecoration(
-                      hintText: "Type a message...",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: const Icon(Icons.send, color: Color(0xFF4A90E2)),
-                  onPressed: sendMessage,
-                ),
-              ],
-            ),
-          )
+          /// Your existing chat UI goes here
+          const Expanded(
+            child: Center(child: Text("Chat Messages Here")),
+          ),
         ],
       ),
     );
